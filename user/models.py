@@ -2,6 +2,7 @@ from django.contrib.auth import get_user_model
 from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+
 User = get_user_model()
 
 GENDER_CHOICES = (
@@ -18,8 +19,8 @@ class Profile(models.Model):
         max_length=50, blank=True)
     bio = models.TextField(max_length=500, blank=True)
     location = models.CharField(max_length=30, blank=True)
-    birth_date = models.DateField(blank=True,null=True)
-    age = models.PositiveIntegerField(blank=True,null=True)
+    birth_date = models.DateField(blank=True, null=True)
+    age = models.PositiveIntegerField(blank=True, null=True)
 
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES, blank=True)
 

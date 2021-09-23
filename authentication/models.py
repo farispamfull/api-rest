@@ -36,7 +36,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     updated_at = models.DateTimeField(_('updated'), auto_now=True)
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username']
-    object = UserManager()
+    objects = UserManager()
 
     def __str__(self):
         return self.email
