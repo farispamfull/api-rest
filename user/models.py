@@ -18,8 +18,8 @@ class Profile(models.Model):
         max_length=50, blank=True)
     bio = models.TextField(max_length=500, blank=True)
     location = models.CharField(max_length=30, blank=True)
-    birth_date = models.DateField(null=True, blank=True)
-    age = models.PositiveIntegerField(blank=True)
+    birth_date = models.DateField(blank=True,null=True)
+    age = models.PositiveIntegerField(blank=True,null=True)
 
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES, blank=True)
 

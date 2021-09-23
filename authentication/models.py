@@ -1,8 +1,6 @@
 from django.contrib.auth.models import (AbstractBaseUser, BaseUserManager,
-                                        PermissionsMixin,AbstractUser)
+                                        PermissionsMixin)
 from django.db import models
-from django.db.models.signals import post_save
-from django.dispatch import receiver
 from django.utils.translation import ugettext_lazy as _
 
 
@@ -23,6 +21,7 @@ class UserManager(BaseUserManager):
         user = self.create_user(username, email, password)
         user.is_superuser = True
         user.is_staff = True
+        user.save()
         return user
 
 
@@ -30,9 +29,9 @@ class User(AbstractBaseUser, PermissionsMixin):
     username = models.CharField(_('username'), max_length=30, unique=True,
                                 db_index=True)
     email = models.EmailField(_('email address'), unique=True, db_index=True)
-    is_verified = models.BooleanField(_('verified'), default=True)
+    is_verified = models.BooleanField(_('verified'), default=False)
     is_active = models.BooleanField(_('active'), default=True)
-    is_staff = models.BooleanField(_('staff'), default=True)
+    is_staff = models.BooleanField(_('staff'), default=False)
     created_at = models.DateTimeField(_('created'), auto_now_add=True)
     updated_at = models.DateTimeField(_('updated'), auto_now=True)
     USERNAME_FIELD = 'email'
@@ -44,7 +43,3 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def token(self):
         pass
-
-
-
-
