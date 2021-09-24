@@ -1,5 +1,6 @@
 from django.contrib.auth import authenticate
 from django.contrib.auth.password_validation import validate_password
+from django.contrib.auth.tokens import default_token_generator
 from rest_framework import serializers
 
 from user.models import Profile, User
@@ -73,5 +74,29 @@ class ChangePasswordSerializer(serializers.Serializer):
         if data['password'] != data['password2']:
             raise serializers.ValidationError(
                 {"password": "Password fields didn't match."})
+
+        return data
+
+
+class ResetPasswordSerializer(serializers.Serializer):
+    password = serializers.CharField(
+        validators=[validate_password],
+        required=True, write_only=True)
+    token = serializers.CharField(max_length=255, write_only=True,
+                                  required=True)
+    email = serializers.EmailField(max_length=255, required=True)
+
+    def validate(self, data):
+        token = data.get('token')
+        password = data.get('password')
+        email = data.get('email')
+        try:
+            user = User.objects.get(email=email)
+        except User.DoesNotExist:
+            raise serializers.ValidationError(
+                {"email": "Такого юзера не существет"})
+        if default_token_generator.check_token(user, token):
+            user.set_password(password)
+            user.is_verified=True
 
         return data

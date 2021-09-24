@@ -2,6 +2,7 @@ from django.contrib.auth.tokens import default_token_generator
 from django.utils.encoding import force_text
 from django.utils.http import urlsafe_base64_decode
 from rest_framework import status
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.generics import UpdateAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -9,7 +10,7 @@ from rest_framework.views import APIView
 
 from .models import User
 from .serializers import (UserRegistrationSerializer, UserLoginSerializer,
-                          ChangePasswordSerializer)
+                          ChangePasswordSerializer,ResetPasswordSerializer)
 from .utils import Util
 
 
@@ -67,7 +68,6 @@ class ChangePasswordView(UpdateAPIView):
         serializer = self.get_serializer(data=request.data)
 
         if serializer.is_valid():
-            print(object.password)
 
             if not object.check_password(
                     serializer.data.get("old_password")):
@@ -84,3 +84,20 @@ class ChangePasswordView(UpdateAPIView):
             return Response(response, status=status.HTTP_200_OK)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['GET'])
+@permission_classes((IsAuthenticated,))
+def password_reset(request):
+    user = request.user
+    Util.password_reset_token_created(request, user)
+    request.user.is_verified = False
+    return Response({'status': 'OK'}, status=status.HTTP_200_OK)
+
+
+@api_view(['POST'])
+@permission_classes((IsAuthenticated,))
+def password_reset_confirm(request):
+    serializer=ResetPasswordSerializer(data=request.data)
+    serializer.is_valid(raise_exception=True)
+    return Response({'status': 'OK'}, status=status.HTTP_200_OK)
