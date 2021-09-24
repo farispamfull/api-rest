@@ -102,6 +102,8 @@ EMAIL_BACKEND = "django.core.mail.backends.filebased.EmailBackend"
 EMAIL_FILE_PATH = os.path.join(BASE_DIR, "sent_emails")
 EMAIL_FROM = "info"
 
+AUTHENTICATION_BACKENDS = ['authentication.backend.AuthenticationBackend',
+                           'django.contrib.auth.backends.ModelBackend', ]
 # Password validation
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators
 

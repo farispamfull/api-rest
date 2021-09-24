@@ -31,16 +31,14 @@ class UserLoginSerializer(serializers.Serializer):
     def validate(self, data):
         email = data.get("email")
         password = data.get("password")
-        user = authenticate(password='AniDUBRu1818',email='dasha@gmail.com')
-        print(user,password,email)
-        print(user.check_password(password))
+        user = authenticate(password=password,email=email)
         if user is None:
-            print(user==None,user is None)
             raise serializers.ValidationError(
                 'A user with this email and password is not found.'
             )
         if not user.is_verified:
             raise serializers.ValidationError('Email is not verified')
+
         if not user.is_active:
             raise serializers.ValidationError(
                 'Account disabled, contact admin')
