@@ -12,7 +12,7 @@ class Util:
         token = default_token_generator.make_token(user)
         uid=urlsafe_base64_encode(force_bytes(user.id))
         current_site = get_current_site(request).domain
-        relative_link = 'activate-email'
+        relative_link = 'auth/activate-email'
         absurl = f'http://{current_site}/{relative_link}/{uid}/{token}'
         mail_subject = f'Verify your email from {current_site}'
         email = user.email

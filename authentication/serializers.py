@@ -6,12 +6,14 @@ from user.models import Profile, User
 
 
 class ProfileSerializer(serializers.ModelSerializer):
-    user=serializers.SlugRelatedField(slug_field='username',read_only=True)
+    user = serializers.SlugRelatedField(slug_field='username', read_only=True)
+
     class Meta:
         model = Profile
         fields = ('user',
-            'first_name', 'last_name', 'bio', 'age', 'gender', 'birth_date',
-            'location')
+                  'first_name', 'last_name', 'bio', 'age', 'gender',
+                  'birth_date',
+                  'location')
 
 
 class UserRegistrationSerializer(serializers.ModelSerializer):
@@ -22,6 +24,16 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         fields = ('email', 'password', 'username', 'profile')
         extra_kwargs = {'password': {'write_only': True,
                                      'validators': [validate_password]}}
+
+    def create(self, validated_data):
+        user = User.objects.create(
+            username=validated_data['username'],
+            email=validated_data['email'],
+        )
+
+        user.set_password(validated_data['password'])
+        user.save()
+        return user
 
 
 class UserLoginSerializer(serializers.Serializer):
@@ -48,3 +60,18 @@ class UserLoginSerializer(serializers.Serializer):
             'email': user.email,
             'token': user.token()
         }
+
+
+class ChangePasswordSerializer(serializers.Serializer):
+    password = serializers.CharField(
+        validators=[validate_password],
+        required=True)
+    password2 = serializers.CharField(required=True)
+    old_password = serializers.CharField(required=True)
+
+    def validate(self, data):
+        if data['password'] != data['password2']:
+            raise serializers.ValidationError(
+                {"password": "Password fields didn't match."})
+
+        return data

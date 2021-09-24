@@ -8,9 +8,9 @@ from .models import Profile
 
 
 class BaseRetrieveViewSet(mixins.ListModelMixin,
-                         mixins.RetrieveModelMixin,
-                         mixins.UpdateModelMixin,
-                         viewsets.GenericViewSet):
+                          mixins.RetrieveModelMixin,
+                          mixins.UpdateModelMixin,
+                          viewsets.GenericViewSet):
     pass
 
 
