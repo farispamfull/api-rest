@@ -3,6 +3,8 @@ from django.contrib.auth.models import (AbstractBaseUser, BaseUserManager,
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
+from rest_framework_simplejwt.tokens import RefreshToken
+
 
 class UserManager(BaseUserManager):
     def create_user(self, username, email, password=None):
@@ -42,4 +44,6 @@ class User(AbstractBaseUser, PermissionsMixin):
         return self.email
 
     def token(self):
-        pass
+        token = RefreshToken.for_user(self)
+        return {'refresh': str(token),
+                'access': str(token.access_token)}
