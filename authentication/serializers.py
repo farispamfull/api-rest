@@ -5,16 +5,17 @@ from rest_framework import serializers
 from user.models import Profile, User
 
 
-class UserSerializer(serializers.ModelSerializer):
+class ProfileSerializer(serializers.ModelSerializer):
+    user=serializers.SlugRelatedField(slug_field='username',read_only=True)
     class Meta:
         model = Profile
-        fields = (
+        fields = ('user',
             'first_name', 'last_name', 'bio', 'age', 'gender', 'birth_date',
             'location')
 
 
 class UserRegistrationSerializer(serializers.ModelSerializer):
-    profile = UserSerializer(read_only=True)
+    profile = ProfileSerializer(read_only=True)
 
     class Meta:
         model = User
@@ -31,7 +32,7 @@ class UserLoginSerializer(serializers.Serializer):
     def validate(self, data):
         email = data.get("email")
         password = data.get("password")
-        user = authenticate(password=password,email=email)
+        user = authenticate(password=password, email=email)
         if user is None:
             raise serializers.ValidationError(
                 'A user with this email and password is not found.'

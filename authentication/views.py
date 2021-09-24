@@ -1,14 +1,15 @@
 from django.contrib.auth.tokens import default_token_generator
-from django.utils.encoding import force_text, DjangoUnicodeDecodeError
+from django.utils.encoding import force_text
 from django.utils.http import urlsafe_base64_decode
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
-
+from rest_framework import viewsets
 from .models import User
 from .serializers import UserRegistrationSerializer, UserLoginSerializer
 from .utils import Util
-
+from rest_framework.decorators import action
+from rest_framework.permissions import IsAuthenticated
 
 class UserRegistrationView(APIView):
     serializer_class = UserRegistrationSerializer
@@ -39,10 +40,7 @@ class ActivateEmailView(APIView):
                             status=status.HTTP_400_BAD_REQUEST)
 
 
-
-
 class UserLoginView(APIView):
-    # permission_classes = (AllowAny,)
     serializer_class = UserLoginSerializer
 
     def post(self, request):
@@ -50,3 +48,21 @@ class UserLoginView(APIView):
         serializer.is_valid(raise_exception=True)
 
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+class UserViewSet(viewsets.ModelViewSet):
+    lookup_field = 'username'
+    queryset = User.objects.all()
+    serializer_class = UserRegistrationSerializer
+    permission_classes = []
+
+    @action(detail=False, methods=['get', 'patch'],
+            permission_classes=[IsAuthenticated])
+    def me(self, request):
+        if request.method == 'GET':
+            serializer = UserSerializer(request.user)
+            return Response(serializer.data)
+        serializer = self.get_serializer(request.user, data=request.data,
+                                         partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save(role=request.user.role, email=request.user.email)
+        return Response(serializer.data)
