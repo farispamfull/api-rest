@@ -80,6 +80,17 @@ class ChangePasswordSerializer(serializers.Serializer):
         return data
 
 
+class ChangeResetPasswordSerializer(serializers.Serializer):
+    email = serializers.EmailField(max_length=255, required=True)
+
+    def validate(self, data):
+        email = data.get('email')
+        if not User.objects.filter(email=email).exists():
+            raise serializers.ValidationError(
+                {"email": "A user with this email is not found"})
+        return data
+
+
 class ResetPasswordSerializer(serializers.Serializer):
     password = serializers.CharField(
         validators=[validate_password],

@@ -1,5 +1,5 @@
 from django.conf import settings
-from django.contrib.auth.tokens import default_token_generator
+from django.contrib.auth.tokens import default_token_generator,PasswordResetTokenGenerator
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.mail import send_mail
 from django.urls import reverse
@@ -10,8 +10,8 @@ from django.utils.http import urlsafe_base64_encode
 class Util:
     @staticmethod
     def send_token_for_email(request, user):
-        token = default_token_generator.make_token(user)
-        uid = urlsafe_base64_encode(force_bytes(user.id))
+        data = Util.token_generation_for_email(user)
+        uid, token = data.values()
         current_site = get_current_site(request).domain
         relative_link = 'auth/activate-email'
         absurl = f'http://{current_site}/{relative_link}/{uid}/{token}'
@@ -26,7 +26,7 @@ class Util:
     @staticmethod
     def password_reset_token_created(request, user):
         current_site = get_current_site(request).domain
-        token = default_token_generator.make_token(user)
+        token = PasswordResetTokenGenerator.make_token(user)
         absurl = f'{reverse("password_reset")}?token={token}'
         email_plaintext_message = (
             f'{user.username}, this is your password reset link\n'
@@ -38,3 +38,9 @@ class Util:
                   [user.email],
                   fail_silently=False,
                   )
+
+    @staticmethod
+    def token_generation_for_email(user):
+        token = default_token_generator.make_token(user)
+        uid = urlsafe_base64_encode(force_bytes(user.id))
+        return {'uid': uid, 'token': token, }

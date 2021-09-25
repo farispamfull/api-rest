@@ -10,7 +10,8 @@ from rest_framework.views import APIView
 
 from .models import User
 from .serializers import (UserRegistrationSerializer, UserLoginSerializer,
-                          ChangePasswordSerializer, ResetPasswordSerializer)
+                          ChangePasswordSerializer, ResetPasswordSerializer,
+                          ChangeResetPasswordSerializer)
 from .utils import Util
 
 
@@ -89,9 +90,11 @@ class ChangePasswordView(UpdateAPIView):
 @api_view(['GET'])
 @permission_classes((IsAuthenticated,))
 def password_reset(request):
-    user = request.user
+    serializer = ChangeResetPasswordSerializer(data=request.data)
+    serializer.is_valid(raise_exception=True)
+    email = serializer.data.get('email')
+    user = User.objects.get(email=email)
     Util.password_reset_token_created(request, user)
-    request.user.is_verified = False
     return Response({'status': 'OK'}, status=status.HTTP_200_OK)
 
 
