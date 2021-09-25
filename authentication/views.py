@@ -10,7 +10,7 @@ from rest_framework.views import APIView
 
 from .models import User
 from .serializers import (UserRegistrationSerializer, UserLoginSerializer,
-                          ChangePasswordSerializer,ResetPasswordSerializer)
+                          ChangePasswordSerializer, ResetPasswordSerializer)
 from .utils import Util
 
 
@@ -96,8 +96,7 @@ def password_reset(request):
 
 
 @api_view(['POST'])
-@permission_classes((IsAuthenticated,))
 def password_reset_confirm(request):
-    serializer=ResetPasswordSerializer(data=request.data)
+    serializer = ResetPasswordSerializer(data=request.data)
     serializer.is_valid(raise_exception=True)
     return Response({'status': 'OK'}, status=status.HTTP_200_OK)

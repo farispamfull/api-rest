@@ -1,6 +1,7 @@
 from django.contrib.auth import authenticate
 from django.contrib.auth.password_validation import validate_password
 from django.contrib.auth.tokens import default_token_generator
+from django.utils import timezone
 from rest_framework import serializers
 
 from user.models import Profile, User
@@ -56,6 +57,7 @@ class UserLoginSerializer(serializers.Serializer):
         if not user.is_active:
             raise serializers.ValidationError(
                 'Account disabled, contact admin')
+        user.last_login = timezone.now()
 
         return {
             'email': user.email,
@@ -73,7 +75,7 @@ class ChangePasswordSerializer(serializers.Serializer):
     def validate(self, data):
         if data['password'] != data['password2']:
             raise serializers.ValidationError(
-                {"password": "Password fields didn't match."})
+                {"password2": "Password fields didn't match."})
 
         return data
 
@@ -94,9 +96,12 @@ class ResetPasswordSerializer(serializers.Serializer):
             user = User.objects.get(email=email)
         except User.DoesNotExist:
             raise serializers.ValidationError(
-                {"email": "Такого юзера не существет"})
-        if default_token_generator.check_token(user, token):
-            user.set_password(password)
-            user.is_verified=True
+                {"email": "user does not exist"})
+        if not default_token_generator.check_token(user, token):
+            raise serializers.ValidationError(
+                {"token": "token invalid"})
 
+        user.set_password(password)
+        user.is_verified = True
+        user.last_login = timezone.now()
         return data
