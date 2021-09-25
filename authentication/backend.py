@@ -55,8 +55,8 @@ class AuthenticationBackend(BaseBackend):
             return None
         return user
 
-    def get_user(self, user_email):
+    def get_user(self, user_id):
         try:
-            return User.objects.get(email=user_email)
+            return User.objects.get(id=user_id)
         except User.DoesNotExist:
             return None

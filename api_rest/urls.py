@@ -15,12 +15,13 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from user.urls import router_v1
-from authentication.views import UserRegistrationView
 
+from user.urls import router_v1
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('auth/', include('authentication.urls',)),
-    path('users/',include(router_v1.urls)),
+    path('auth/', include('authentication.urls', )),
+    path('users/', include(router_v1.urls)),
 ]
+handler404 = 'api_rest.views.error_404'
+handler500 = 'api_rest.views.error_500'
