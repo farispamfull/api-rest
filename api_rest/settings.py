@@ -88,20 +88,16 @@ REST_FRAMEWORK = {
     #     'rest_framework.permissions.AllowAny',
     # ],
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'authentication.backend.CustomJWTAuthentication',
         'rest_framework.authentication.SessionAuthentication', ],
 
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 20,
-    'DEFAULT_THROTTLE_RATES': {
-        'post_email': '2/day'
-    }
 }
 
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(days=1),
     'AUTH_HEADER_TYPES': ('Bearer',),
-    'USER_AUTHENTICATION_RULE': 'authentication.backend.custom_user_authentication_rule'
 }
 EMAIL_BACKEND = "django.core.mail.backends.filebased.EmailBackend"
 EMAIL_FILE_PATH = os.path.join(BASE_DIR, "sent_emails")
