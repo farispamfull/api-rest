@@ -26,7 +26,7 @@ class Util:
     @staticmethod
     def password_reset_token_created(request, user):
         current_site = get_current_site(request).domain
-        token = PasswordResetTokenGenerator.make_token(user)
+        token = PasswordResetTokenGenerator().make_token(user)
         absurl = f'{reverse("password_reset")}?token={token}'
         email_plaintext_message = (
             f'{user.username}, this is your password reset link\n'

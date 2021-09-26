@@ -1,6 +1,6 @@
 from django.contrib.auth import authenticate
 from django.contrib.auth.password_validation import validate_password
-from django.contrib.auth.tokens import default_token_generator
+from django.contrib.auth.tokens import default_token_generator,PasswordResetTokenGenerator
 from django.utils import timezone
 from rest_framework import serializers
 
@@ -108,7 +108,7 @@ class ResetPasswordSerializer(serializers.Serializer):
         except User.DoesNotExist:
             raise serializers.ValidationError(
                 {"email": "user does not exist"})
-        if not default_token_generator.check_token(user, token):
+        if not PasswordResetTokenGenerator().check_token(user,token):
             raise serializers.ValidationError(
                 {"token": "token invalid"})
 

@@ -87,8 +87,7 @@ class ChangePasswordView(UpdateAPIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-@api_view(['GET'])
-@permission_classes((IsAuthenticated,))
+@api_view(['POST'])
 def password_reset(request):
     serializer = ChangeResetPasswordSerializer(data=request.data)
     serializer.is_valid(raise_exception=True)
