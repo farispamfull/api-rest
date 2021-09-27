@@ -21,7 +21,7 @@ from user.urls import router_v1
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('auth/', include('authentication.urls', )),
-    path('users/', include(router_v1.urls)),
+    path('api/users/', include(router_v1.urls)),
 ]
 handler404 = 'api_rest.views.error_404'
 handler500 = 'api_rest.views.error_500'

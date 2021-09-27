@@ -1,10 +1,12 @@
-from django.contrib.auth import authenticate
+from django.contrib.auth import authenticate, get_user_model
 from django.contrib.auth.password_validation import validate_password
-from django.contrib.auth.tokens import default_token_generator,PasswordResetTokenGenerator
+from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.utils import timezone
 from rest_framework import serializers
 
-from user.models import Profile, User
+from user.models import Profile
+
+User = get_user_model()
 
 
 class ProfileSerializer(serializers.ModelSerializer):
@@ -58,6 +60,7 @@ class UserLoginSerializer(serializers.Serializer):
             raise serializers.ValidationError(
                 'Account disabled, contact admin')
         user.last_login = timezone.now()
+        user.save()
 
         return {
             'email': user.email,
@@ -76,7 +79,11 @@ class ChangePasswordSerializer(serializers.Serializer):
         if data['password'] != data['password2']:
             raise serializers.ValidationError(
                 {"password2": "Password fields didn't match."})
-
+        old_password = data['old_password']
+        user = self.context['request'].user
+        if not user.check_password(old_password):
+            raise serializers.ValidationError(
+                {"old_password": "Wrong password"})
         return data
 
 
@@ -108,11 +115,12 @@ class ResetPasswordSerializer(serializers.Serializer):
         except User.DoesNotExist:
             raise serializers.ValidationError(
                 {"email": "user does not exist"})
-        if not PasswordResetTokenGenerator().check_token(user,token):
+        if not PasswordResetTokenGenerator().check_token(user, token):
             raise serializers.ValidationError(
                 {"token": "token invalid"})
-
         user.set_password(password)
         user.is_verified = True
         user.last_login = timezone.now()
+        user.save()
+
         return data
