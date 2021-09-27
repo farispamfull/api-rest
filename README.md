@@ -30,7 +30,11 @@
 
 `password_reset/confirm/`
 
+*Prefix* `api/`
 
+`/users/profiles` (доступ staff)
+
+`/users/profiles/me` (доступ request.user)
 
 
 
