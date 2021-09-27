@@ -4,3 +4,10 @@
 Характерные особенности:
 
 Проект на полную аутентификацию пользователь с некоторой кастомизацией jwt и backend аутентификацией Django. Гибкая реализация передача permissions на уровне модели и на уровне экземпляра модели с помощью django-guardian и django admin.
+
+
+# TODO
+* permissions/admin permissions
+* добавить модели оценки
+* celery + redis
+* docker-compose
