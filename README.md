@@ -41,7 +41,7 @@
 
 # TODO
 * документация
-* permissions/admin permissions
+* permissions на уровне экземпляра модели
 * добавить модели оценки
 * celery + redis
 * docker-compose
