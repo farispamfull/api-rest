@@ -12,6 +12,26 @@
 3. Пользователь переходит по ссылке и если она действительная сервер вернет ответ Successfully activated
 4. Далее пользователь отправляет запрос с параметрами `email`,`password` на `auth/signup/` в ответе на запрос ему приходит `token` (JWT-токен).
 
+## Доступные endpoint
+*Prefix* auth/
+`register/`
+
+`activate-email/<uidb64>/<token>/`
+
+`signup/`
+
+`token/refresh/`
+
+`change_password/`
+
+`password_reset/`
+
+`password_reset/confirm/`
+
+
+
+
+
 
 # TODO
 * permissions/admin permissions
