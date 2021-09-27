@@ -13,7 +13,9 @@
 4. Далее пользователь отправляет запрос с параметрами `email`,`password` на `auth/signup/` в ответе на запрос ему приходит `token` (JWT-токен).
 
 ## Доступные endpoint
-*Prefix* auth/
+
+*Prefix* `auth/`
+
 `register/`
 
 `activate-email/<uidb64>/<token>/`
