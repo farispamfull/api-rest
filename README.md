@@ -40,6 +40,7 @@
 
 
 # TODO
+* документация
 * permissions/admin permissions
 * добавить модели оценки
 * celery + redis
